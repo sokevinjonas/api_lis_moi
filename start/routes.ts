@@ -7,6 +7,7 @@
 |
 */
 
+import BooksController from '#controllers/books_controller'
 import CategoriesController from '#controllers/categories_controller'
 import router from '@adonisjs/core/services/router'
 
@@ -17,3 +18,4 @@ router.get('/', async () => {
 })
 
 router.resource('/categories', CategoriesController).apiOnly()
+router.resource('/books', BooksController).apiOnly()
