@@ -76,7 +76,30 @@ export default class BooksController {
   /**
    * Show individual record
    */
-  // async show({ params }: HttpContext) {}
+  async show({ params, response }: HttpContext) {
+    try {
+      // Récupérer la catégorie par ID
+      const book = await Book.find(params.id)
+
+      if (!book) {
+        return response.status(404).json({
+          success: false,
+          message: 'Livre non trouvée',
+        })
+      }
+
+      return response.status(200).json({
+        success: true,
+        data: book,
+      })
+    } catch (error) {
+      return response.status(500).json({
+        success: false,
+        message: 'Une erreur est survenue',
+        error: error.message,
+      })
+    }
+  }
 
   /**
    * Edit individual record
@@ -91,5 +114,26 @@ export default class BooksController {
   /**
    * Delete record
    */
-  // async destroy({ params }: HttpContext) {}
+  async destroy({ params, response }: HttpContext) {
+    try {
+      const book = await Book.find(params.id)
+      if (!book) {
+        return response.status(404).json({
+          success: false,
+          message: 'Livre non trouvée',
+        })
+      }
+      await book.delete()
+      return response.status(404).json({
+        success: true,
+        message: 'Livre supprimée avec succès',
+      })
+    } catch (error) {
+      return response.status(500).json({
+        success: false,
+        message: 'Une erreur est survenue',
+        error: error.message,
+      })
+    }
+  }
 }

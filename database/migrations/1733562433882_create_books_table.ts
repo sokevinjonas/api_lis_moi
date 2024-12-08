@@ -11,6 +11,9 @@ export default class extends BaseSchema {
       table.string('cover_image').notNullable() // Lien de la couverture
       table.integer('category_id').unsigned().references('categories.id').onDelete('CASCADE') // Catégorie
       table.boolean('has_digital_version').defaultTo(false) // Version numérique disponible ou non
+      table.enum('langage', ['Francais', 'Anglais'])
+      table.integer('nbr_page')
+      table.text('bio_author')
       table.string('url').nullable() // Lien du fichier numérique
       table.decimal('price', 10, 2).nullable()
       table.timestamp('created_at')

@@ -9,11 +9,13 @@ export const createBookValidator = vine.compile(
       extnames: ['jpg', 'png', 'jpeg'],
     }),
     hasDigitalVersion: vine.boolean().optional(),
-    // url: vine.string(),
     url: vine.file({
       size: '20mb',
       extnames: ['pdf', 'epub'],
     }),
+    nbr_page: vine.number(),
+    bio_author: vine.string().trim().minLength(25).maxLength(250),
+    langage: vine.enum(['Francais', 'Anglais']),
     category_id: vine.number().exists({ table: 'categories', column: 'id' }),
     price: vine.number().optional(),
   })

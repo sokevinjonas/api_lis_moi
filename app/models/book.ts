@@ -23,6 +23,15 @@ export default class Book extends BaseModel {
   declare url: string | null
 
   @column()
+  declare langage: string
+
+  @column()
+  declare nbr_page: number
+
+  @column()
+  declare bio_author: string
+
+  @column()
   declare price: number | null
 
   @column()
