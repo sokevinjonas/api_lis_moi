@@ -1,6 +1,8 @@
 import Book from '#models/book'
 import { createBookValidator } from '#validators/book'
+import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
+import app from '@adonisjs/core/services/app'
 
 export default class BooksController {
   /**
@@ -33,8 +35,31 @@ export default class BooksController {
   async store({ request, response }: HttpContext) {
     try {
       const data = await request.validateUsing(createBookValidator)
+      const coverImage = data.cover_image
+      const url = data.url
 
-      const book = await Book.create(data)
+      let coverImageName: string = ''
+      let urlName: string = ''
+
+      if (coverImage && url) {
+        // Generate a unique file name and move the file
+        coverImageName = `${cuid()}.${coverImage.extname}`
+        await coverImage.move(app.makePath('uploads/cover'), {
+          name: coverImageName,
+        })
+
+        urlName = `${cuid()}.${url.extname}`
+        await url.move(app.makePath('uploads/books'), {
+          name: urlName,
+        })
+      }
+      const bookData = {
+        ...data,
+        cover_image: coverImageName,
+        url: urlName,
+      }
+
+      const book = await Book.create(bookData)
 
       return response.status(200).json({
         message: 'Livre créé avec succès.',
