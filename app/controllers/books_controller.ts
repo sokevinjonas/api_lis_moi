@@ -8,9 +8,11 @@ export default class BooksController {
   /**
    * Display a list of resource
    */
+  public baseUrl = 'http://localhost:3333' // en test
+
   async index({ response }: HttpContext) {
     try {
-      const books = await Book.all()
+      const books = await Book.query().preload('category_id')
       return response.status(200).json({
         sucess: true,
         data: books,
@@ -35,6 +37,8 @@ export default class BooksController {
   async store({ request, response }: HttpContext) {
     try {
       const data = await request.validateUsing(createBookValidator)
+      console.log(data)
+
       const coverImage = data.cover_image
       const url = data.url
 
@@ -47,16 +51,16 @@ export default class BooksController {
         await coverImage.move(app.makePath('uploads/cover'), {
           name: coverImageName,
         })
-
         urlName = `${cuid()}.${url.extname}`
         await url.move(app.makePath('uploads/books'), {
           name: urlName,
         })
       }
+
       const bookData = {
         ...data,
-        cover_image: coverImageName,
-        url: urlName,
+        cover_image: `${this.baseUrl}/uploads/cover/${coverImageName}`,
+        url: `${this.baseUrl}/uploads/books/${urlName}`,
       }
 
       const book = await Book.create(bookData)
@@ -78,9 +82,8 @@ export default class BooksController {
    */
   async show({ params, response }: HttpContext) {
     try {
-      // Récupérer la catégorie par ID
-      const book = await Book.find(params.id)
-
+      // const book = await Book.find(params.id)
+      const book = await Book.query().where('id', params.id).preload('category_id')
       if (!book) {
         return response.status(404).json({
           success: false,

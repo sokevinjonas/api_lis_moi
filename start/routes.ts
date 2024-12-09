@@ -9,7 +9,9 @@
 
 import BooksController from '#controllers/books_controller'
 import CategoriesController from '#controllers/categories_controller'
+import app from '@adonisjs/core/services/app'
 import router from '@adonisjs/core/services/router'
+import { normalize, sep } from 'path'
 
 router.get('/', async () => {
   return {
@@ -19,3 +21,18 @@ router.get('/', async () => {
 
 router.resource('/categories', CategoriesController).apiOnly()
 router.resource('/books', BooksController).apiOnly()
+
+const PATH_TRAVERSAL_REGEX = /(?:^|[\\/])\.\.(?:[\\/]|$)/
+
+router.get('/uploads/*', ({ request, response }) => {
+  const filePath = request.param('*').join(sep)
+  const normalizedPath = normalize(filePath)
+
+  if (PATH_TRAVERSAL_REGEX.test(normalizedPath)) {
+    return response.badRequest('Malformed path')
+  }
+
+  const absolutePath = app.makePath('uploads', normalizedPath)
+  console.log('Chemin du fichier :', absolutePath) // Debug
+  return response.download(absolutePath)
+})

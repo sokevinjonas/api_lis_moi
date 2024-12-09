@@ -32,13 +32,16 @@ export default class Book extends BaseModel {
   declare bio_author: string
 
   @column()
+  declare author: string
+
+  @column()
   declare price: number | null
 
   @column()
   declare categoryId: number
 
   @belongsTo(() => Category)
-  declare category: BelongsTo<typeof Category>
+  declare category_id: BelongsTo<typeof Category>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

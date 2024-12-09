@@ -14,6 +14,7 @@ export default class extends BaseSchema {
       table.enum('langage', ['Francais', 'Anglais'])
       table.integer('nbr_page')
       table.text('bio_author')
+      table.string('author')
       table.string('url').nullable() // Lien du fichier numérique
       table.decimal('price', 10, 2).nullable()
       table.timestamp('created_at')
