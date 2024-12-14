@@ -13,17 +13,7 @@ import app from '@adonisjs/core/services/app'
 import router from '@adonisjs/core/services/router'
 import { normalize, sep } from 'path'
 
-router.get('/', async () => {
-  return {
-    hello: 'world',
-  }
-})
-
-router.resource('/categories', CategoriesController).apiOnly()
-router.resource('/books', BooksController).apiOnly()
-
 const PATH_TRAVERSAL_REGEX = /(?:^|[\\/])\.\.(?:[\\/]|$)/
-
 router.get('/uploads/*', ({ request, response }) => {
   const filePath = request.param('*').join(sep)
   const normalizedPath = normalize(filePath)
@@ -36,3 +26,15 @@ router.get('/uploads/*', ({ request, response }) => {
   console.log('Chemin du fichier :', absolutePath) // Debug
   return response.download(absolutePath)
 })
+
+router.get('/', async ({ view }) => {
+  return view.render('welcome', { username: 'SO JONAS' })
+})
+
+// groupe pour la version 1 de l'api
+router
+  .group(() => {
+    router.resource('/categories', CategoriesController).apiOnly()
+    router.resource('/books', BooksController).apiOnly()
+  })
+  .prefix('api_v1')
