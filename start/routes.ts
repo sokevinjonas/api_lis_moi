@@ -30,6 +30,8 @@ router.get('/uploads/*', ({ request, response }) => {
 router.get('/', async ({ view }) => {
   return view.render('welcome', { username: 'SO JONAS' })
 })
+// Création des routes pour le panel admin
+
 
 // groupe pour la version 1 de l'api
 router
